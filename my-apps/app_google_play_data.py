@@ -16,7 +16,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 # configure app layout
 app.layout = html.Div(children=[
     html.Div(children=[
-        html.H1("Google Play Store Data Visualization", style={"text-align": "center"})
+        html.H1("Reviews vs Ratings of Google Play Store Apps", style={"text-align": "center"})
     ]),
     
     # dropdown for app category
@@ -27,9 +27,9 @@ app.layout = html.Div(children=[
             options=[{"label": i, "value": i} for i in df.Category.unique()]
         )], 
         style={
-            "width": "30%", 
+            "width": "25%", 
             "display": "inline-block",
-            "margin": {"l": 50, "t": 50, "b": 50, "r": 50}}),
+            "padding": {"l": 50, "t": 50, "b": 50, "r": 50}}),
 
     # dropdown for number of app installs
     html.Div([
@@ -39,9 +39,9 @@ app.layout = html.Div(children=[
             options=[{"label": i, "value": i} for i in df.Installs.unique()]
         )], 
         style={
-            "width": "30%",
+            "width": "25%",
             "display": "inline-block",
-            "margin": {"l": 50, "t": 50, "b": 50, "r": 50}
+            "padding": {"l": 50, "t": 50, "b": 50, "r": 50}
             }),
 
     # dropdown for type of app
@@ -52,9 +52,9 @@ app.layout = html.Div(children=[
             options=[{"label": i, "value": i} for i in df.Type.unique()]
         )], 
         style={
-            "width": "30%", 
+            "width": "25%", 
             "display": "inline-block", 
-            "margin": {"l": 50, "t": 50, "b": 50, "r": 50}
+            "padding": {"l": 50, "t": 50, "b": 50, "r": 50}
             }),
 
     # graph to display filtered data
@@ -70,10 +70,18 @@ app.layout = html.Div(children=[
      Input("app-type", "value")]
 )
 def update_graph(app_category, app_installs, app_type):
-    # filter dataset
-    filtered_df = df[(df["Category"] == app_category) & 
-                     (df["Installs"] == app_installs) & 
-                     (df["Type"] == app_type)]
+    # assign variables to corresponding df column names
+    column_vars = {
+        "Category": app_category,
+        "Installs": app_installs,
+        "Type": app_type
+    }
+
+    # filter dataset by values selected
+    filtered_df = df.copy()
+    for col_name in column_vars.keys():
+        if column_vars[col_name] != None:
+            filtered_df = filtered_df[filtered_df[col_name] == column_vars[col_name]]
 
     # return scatter of reviews against ratings
     return {
@@ -94,7 +102,8 @@ def update_graph(app_category, app_installs, app_type):
         "layout": go.Layout(
             xaxis={"type": "linear", "title": "# of Reviews"},
             yaxis={"type": "linear", "title": "# of Ratings"},
-            margin={"l": 40, "r": 40, "b": 40, "t": 40}
+            margin={"l": 40, "r": 40, "b": 40, "t": 40},
+            hovermode="closest"
         )
     }
 
