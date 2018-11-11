@@ -10,6 +10,7 @@ dash-core-components = "*"
 dash-table = "*"
 numpy = "*"
 pandas = "*"
+jupyter = "*"
 
 [dev-packages]
 pylint = "*"
